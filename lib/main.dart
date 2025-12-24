@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mashinsazi_akhgar_web/theme/theme_cubit.dart';
 import 'package:mashinsazi_akhgar_web/ui/pages/home_page.dart';
+import 'package:mashinsazi_akhgar_web/ui/pages/news_detail_page.dart';
+import 'package:mashinsazi_akhgar_web/ui/pages/news_page.dart';
 import 'package:mashinsazi_akhgar_web/ui/pages/product_detail_page.dart';
 import 'package:mashinsazi_akhgar_web/ui/pages/products_page.dart';
 
@@ -47,6 +49,7 @@ class MainApp extends StatelessWidget {
           getPages: [
             GetPage(name: '/', page: () => const HomePage()),
             GetPage(name: '/products', page: () => const ProductsPage()),
+            GetPage(name: '/news', page: () => const NewsPage()),
             GetPage(
               name: '/products/:id',
               page: () {
@@ -54,6 +57,14 @@ class MainApp extends StatelessWidget {
                 final idStr = Get.parameters['id'];
                 final id = int.tryParse(idStr ?? '') ?? 0;
                 return ProductDetailPage(productId: id);
+              },
+            ),
+            GetPage(
+              name: '/news/:id',
+              page: () {
+                final idStr = Get.parameters['id'];
+                final id = int.tryParse(idStr ?? '') ?? 0;
+                return NewsDetailPage(postId: id);
               },
             ),
             // Add more pages like /about, /contact if you create specific files for them

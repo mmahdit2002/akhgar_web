@@ -6,7 +6,7 @@ import '../models/wp_product.dart';
 class WpApiService {
   // آدرس دامنه وردپرس را اینجا بگذار
   static const String wpBase = 'https://mashinsazi-akhgar.com';
-  static const String apiBase = '$wpBase/wp-json/wp/v2';
+  static const String apiBase = '$wpBase/wordpress/wp-json/wp/v2';
 
   final http.Client _client;
 
@@ -50,5 +50,14 @@ class WpApiService {
     }
     final Map<String, dynamic> data = jsonDecode(res.body) as Map<String, dynamic>;
     return WpProduct.fromJson(data);
+  }
+
+  Future<WpPost> fetchPost(int id) async {
+    final uri = Uri.parse('$apiBase/posts/$id?_embed');
+    final res = await _client.get(uri);
+    if (res.statusCode != 200) throw Exception('Failed to load post');
+
+    final Map<String, dynamic> data = jsonDecode(res.body);
+    return WpPost.fromJson(data);
   }
 }

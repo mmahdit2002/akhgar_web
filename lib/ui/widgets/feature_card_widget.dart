@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../theme/web_colors.dart';
 
-class FeatureCard extends StatelessWidget {
+class FeatureCardWidget extends StatelessWidget {
   final String title;
   final String description;
   final String? imageUrl;
   final IconData? icon;
 
-  const FeatureCard({
+  const FeatureCardWidget({
     super.key,
     required this.title,
     required this.description,
