@@ -13,6 +13,8 @@ class LoadFeaturedProducts extends ProductEvent {
 }
 
 class LoadAllProducts extends ProductEvent {
-  final int count;
-  const LoadAllProducts({this.count = 20});
+  final bool isRefresh;
+  const LoadAllProducts({this.isRefresh = false});
 }
+
+class LoadMoreProducts extends ProductEvent {}

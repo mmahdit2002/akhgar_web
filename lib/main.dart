@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart'; // Required for PointerDeviceKind
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:mashinsazi_akhgar_web/bloc/post/post_bloc.dart';
 import 'package:mashinsazi_akhgar_web/theme/theme_cubit.dart';
 import 'package:mashinsazi_akhgar_web/ui/pages/home_page.dart';
 import 'package:mashinsazi_akhgar_web/ui/pages/news_detail_page.dart';
@@ -24,10 +26,21 @@ Future<void> main() async {
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => ProductBloc(api: apiService)),
+        BlocProvider(create: (_) => PostBloc(api: apiService)),
       ],
       child: const MainApp(),
     ),
   );
+}
+
+// 1. Define Custom Scroll Behavior for Desktop Dragging
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse, // 👈 Enables mouse dragging
+    PointerDeviceKind.trackpad,
+  };
 }
 
 class MainApp extends StatelessWidget {
@@ -40,6 +53,7 @@ class MainApp extends StatelessWidget {
         return GetMaterialApp(
           title: 'ماشین سازی اخگر | Mashinsazi Akhgar',
           debugShowCheckedModeBanner: false,
+          scrollBehavior: AppScrollBehavior(), // 👈 Apply globally
           theme: WebTheme.lightTheme,
           darkTheme: WebTheme.darkTheme,
           themeMode: themeMode,
@@ -53,7 +67,6 @@ class MainApp extends StatelessWidget {
             GetPage(
               name: '/products/:id',
               page: () {
-                // Safe parsing of ID from parameters
                 final idStr = Get.parameters['id'];
                 final id = int.tryParse(idStr ?? '') ?? 0;
                 return ProductDetailPage(productId: id);
@@ -67,7 +80,6 @@ class MainApp extends StatelessWidget {
                 return NewsDetailPage(postId: id);
               },
             ),
-            // Add more pages like /about, /contact if you create specific files for them
           ],
         );
       },
