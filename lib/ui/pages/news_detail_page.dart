@@ -1,3 +1,4 @@
+// news_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -31,12 +32,12 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
   Widget build(BuildContext context) {
     final isDark = context.select((ThemeCubit c) => c.isDark);
     final text = isDark ? WebColors.darkText : WebColors.lightText;
-    final secondaryText = isDark ? Colors.grey[400] : Colors.grey[600];
+    final secondaryText = isDark ? Colors.grey[400] : WebColors.lightTextSecondary;
 
     return Scaffold(
-      backgroundColor: isDark ? WebColors.darkBg : Colors.white,
+      backgroundColor: isDark ? WebColors.darkBg : WebColors.lightBg,
       appBar: AppBar(
-        backgroundColor: isDark ? WebColors.darkBg : Colors.white,
+        backgroundColor: isDark ? WebColors.darkBg : WebColors.lightBg,
         surfaceTintColor: Colors.transparent, // Material 3 fix
         elevation: 0,
         centerTitle: true,
@@ -143,7 +144,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                     ),
 
                     const SizedBox(height: 32),
-                    Divider(color: isDark ? Colors.white10 : Colors.black12, height: 1),
+                    Divider(color: isDark ? Colors.white10 : WebColors.lightBorder, height: 1),
                     const SizedBox(height: 32),
 
                     // 3. Rich Content (HTML)
@@ -171,7 +172,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                           ),
                           "blockquote": Style(
                             padding: HtmlPaddings.all(16),
-                            backgroundColor: isDark ? WebColors.darkBgSoft : Colors.grey[100],
+                            backgroundColor: isDark ? WebColors.darkBgSoft : WebColors.lightBgSoft,
                             border: Border(right: BorderSide(color: WebColors.secondary, width: 4)),
                             fontStyle: FontStyle.italic,
                             margin: Margins.symmetric(vertical: 20),

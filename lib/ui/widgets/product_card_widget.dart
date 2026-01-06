@@ -1,3 +1,4 @@
+// product_card_widget.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/wp_product.dart';
@@ -47,7 +48,7 @@ class ProductCardWidget extends StatelessWidget {
                         imageUrl: product.imageUrl!,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Container(
-                          color: isDark ? const Color(0xFF151A2C) : const Color(0xFFEEEEEE),
+                          color: isDark ? const Color(0xFF151A2C) : WebColors.lightBg,
                           child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
                         ),
                         errorWidget: (context, url, error) => _buildPlaceholder(isDark),
@@ -113,7 +114,7 @@ class ProductCardWidget extends StatelessWidget {
 
   Widget _buildPlaceholder(bool isDark) {
     return Container(
-      color: isDark ? const Color(0xFF151A2C) : const Color(0xFFEEEEEE),
+      color: isDark ? const Color(0xFF151A2C) : WebColors.lightBg,
       child: Center(
         child: Icon(
           Icons.image_not_supported_outlined,

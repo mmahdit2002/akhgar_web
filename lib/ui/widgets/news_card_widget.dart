@@ -1,3 +1,4 @@
+// news_card_widget.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/wp_post.dart';
@@ -48,7 +49,7 @@ class NewsCardWidget extends StatelessWidget {
               AspectRatio(
                 aspectRatio: 1.6,
                 child: Container(
-                  color: isDark ? const Color(0xFF151A2C) : const Color(0xFFEEEEEE),
+                  color: isDark ? const Color(0xFF151A2C) : WebColors.lightBg,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [

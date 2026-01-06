@@ -9,12 +9,11 @@ import 'package:mashinsazi_akhgar_web/theme/web_colors.dart';
 import 'package:mashinsazi_akhgar_web/ui/widgets/feature_card_widget.dart';
 import 'package:mashinsazi_akhgar_web/ui/widgets/news_card_widget.dart';
 import 'package:mashinsazi_akhgar_web/ui/widgets/product_card_widget.dart';
-
+import 'package:mashinsazi_akhgar_web/ui/widgets/professional_map_widget.dart';
 import 'package:mashinsazi_akhgar_web/ui/widgets/tech_orbit_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -22,20 +21,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   final WpApiService _api = WpApiService(); // For fetching news directly here or use Bloc
-
   // Animation Controllers for that "Premium" feel
   late AnimationController _orbitController;
   late Future<List<WpPost>> _latestNewsFuture;
-
   @override
   void initState() {
     super.initState();
     // Load Product data via Bloc
     context.read<ProductBloc>().add(const LoadFeaturedProducts(count: 3));
-
     // Load News Data (Simple Future for landing preview)
     _latestNewsFuture = _api.fetchLatestPosts(perPage: 3);
-
     // Orbit Animation for Hero Section
     _orbitController = AnimationController(
       vsync: this,
@@ -61,12 +56,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final isDark = context.select((ThemeCubit c) => c.isDark);
-
     // Background Colors (Deep Industrial Navy/Black)
-    final bgGradient = isDark ? const [Color(0xFF151A2C), Color(0xFF050814), Color(0xFF02030A)] : const [Color(0xFFF0F2F5), Color(0xFFFFFFFF), Color(0xFFE9ECEF)];
-
+    final bgGradient = isDark ? const [Color(0xFF151A2C), Color(0xFF050814), Color(0xFF02030A)] : const [WebColors.lightBg, WebColors.lightBgSoft, WebColors.lightBorder];
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF050814) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF050814) : WebColors.lightBg,
       body: Stack(
         children: [
           // 1. Global Background
@@ -81,7 +74,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
           ),
-
           // 2. Scrollable Content (With Top Padding for Fixed Header)
           SingleChildScrollView(
             controller: _scrollController,
@@ -101,7 +93,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
-
           // 3. FIXED HEADER (On Top of everything)
           Positioned(
             top: 0,
@@ -118,15 +109,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // 1. HEADER (Fixed & Glassmorphism)
   // ---------------------------------------------------------------------------
   Widget _buildHeader(BuildContext context, bool isDark) {
+    // Use lightHeaderBg in light mode instead of lightBg
+    final headerColor = isDark ? const Color(0xFF050814) : WebColors.lightHeaderBg;
+    // Force text to be white/light since background is now always dark
+    final iconColor = Colors.white70;
+
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
-        color: (isDark ? const Color(0xFF050814) : Colors.white).withOpacity(0.95),
-        border: Border(bottom: BorderSide(color: isDark ? Colors.white10 : Colors.black12)),
+        color: headerColor.withOpacity(0.95), // Always dark background
+        border: Border(bottom: BorderSide(color: Colors.white10)), // Always subtle border
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.2), // Stronger shadow for dark bg
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -137,7 +133,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Row(
             children: [
-              // Logo
+              // Logo (Keep as is)
               Container(
                 width: 40,
                 height: 40,
@@ -171,7 +167,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: Colors.white, // Always white
                     ),
                   ),
                   Text(
@@ -179,22 +175,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     style: TextStyle(
                       fontSize: 10,
                       letterSpacing: 1,
-                      color: isDark ? Colors.white54 : Colors.black54,
+                      color: Colors.white54, // Always light grey
                     ),
                   ),
                 ],
               ),
               const Spacer(),
-
               // Desktop Nav
               if (MediaQuery.of(context).size.width > 900) ...[
-                _headerLink('خانه', () => _scrollTo(0), isDark),
-                _headerLink('محصولات', () => _scrollTo(700), isDark),
-                _headerLink('اخبار', () => _scrollTo(1500), isDark), // Added News Link
-                _headerLink('درباره ما', () => _scrollTo(2200), isDark),
+                // FORCE isDark = true for links so they render white text
+                _headerLink('خانه', () => _scrollTo(0), true),
+                _headerLink('محصولات', () => _scrollTo(700), true),
+                _headerLink('اخبار', () => _scrollTo(1500), true),
+                _headerLink('درباره ما', () => _scrollTo(2200), true),
                 const SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: () => _scrollTo(3500), // Contact Offset
+                  onPressed: () => _scrollTo(3500),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: WebColors.primary,
                     foregroundColor: Colors.white,
@@ -206,11 +202,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   child: const Text('تماس با ما'),
                 ),
               ],
-
               const SizedBox(width: 16),
               IconButton(
                 icon: Icon(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-                color: isDark ? Colors.white70 : Colors.black54,
+                color: iconColor, // Always light
                 onPressed: () => context.read<ThemeCubit>().toggleTheme(),
               ),
             ],
@@ -223,16 +218,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _headerLink(String label, VoidCallback onTap, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: InkWell(
+      child: HoverTextLink(
+        text: label,
         onTap: onTap,
-        hoverColor: Colors.transparent,
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white70 : Colors.black54,
-          ),
+        hoverColor: WebColors.primary, // The color you requested
+        baseStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: isDark ? Colors.white70 : Colors.black54,
         ),
       ),
     );
@@ -270,7 +263,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'راهکارهای حرفه‌ای\nبرای خطوط تولید مدرن',
+                      'ماشین‌سازی اخگر، راه‌حل‌های نوین برای صنعت مدرن',
                       style: TextStyle(
                         fontSize: isDesktop ? 48 : 36,
                         fontWeight: FontWeight.w900,
@@ -325,7 +318,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-
               // VISUAL SIDE
               if (isDesktop) ...[const SizedBox(width: 60), TechOrbitWidget()],
             ],
@@ -355,8 +347,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF050814) : const Color(0xFFFAFAFA),
-        border: Border(top: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
+        color: isDark ? const Color(0xFF050814) : WebColors.lightBgSoft,
+        border: Border(top: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : WebColors.lightBorder)),
       ),
       child: Center(
         child: ConstrainedBox(
@@ -430,7 +422,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 builder: (context, state) {
                   if (state.status == ProductStatus.loading) return const CircularProgressIndicator();
                   if (state.products.isEmpty) return const Text('محصولی یافت نشد');
-
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       final cols = constraints.maxWidth > 900 ? 3 : (constraints.maxWidth > 600 ? 2 : 1);
@@ -466,7 +457,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildNewsSection(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
-      color: isDark ? const Color(0xFF070B16) : Colors.grey[50],
+      color: isDark ? const Color(0xFF070B16) : WebColors.lightBgSoft,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
@@ -491,7 +482,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) return const CircularProgressIndicator();
                   if (!snapshot.hasData || snapshot.data!.isEmpty) return const Text('خبری نیست');
-
                   final posts = snapshot.data!;
                   return LayoutBuilder(
                     builder: (context, constraints) {
@@ -528,8 +518,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0A0E1E) : Colors.white,
-        border: Border.symmetric(horizontal: BorderSide(color: isDark ? Colors.white10 : Colors.black12)),
+        color: isDark ? const Color(0xFF0A0E1E) : WebColors.lightBgSoft,
+        border: Border.symmetric(horizontal: BorderSide(color: isDark ? Colors.white10 : WebColors.lightBorder)),
       ),
       child: Center(
         child: ConstrainedBox(
@@ -596,6 +586,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildCtaSection(BuildContext context, bool isDark) {
+    final bgGradient = isDark ? const LinearGradient(colors: [Color(0xFF151A2C), Color(0xFF050814)]) : const LinearGradient(colors: [WebColors.lightBgSoft, WebColors.lightBg]);
+    final borderColor = isDark ? Colors.white10 : WebColors.lightBorder;
+    final textColor = isDark ? Colors.white : WebColors.lightText;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
       margin: const EdgeInsets.only(top: 40, bottom: 40),
@@ -605,15 +599,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: Container(
             padding: const EdgeInsets.all(48),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF151A2C), Color(0xFF050814)]),
+              gradient: bgGradient,
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: borderColor),
             ),
             child: Column(
               children: [
-                const Text(
+                Text(
                   'نیاز به مشاوره تخصصی دارید؟',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: textColor),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
@@ -636,79 +630,318 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // 8. FOOTER
   // ---------------------------------------------------------------------------
   Widget _buildFooter(BuildContext context, bool isDark) {
+    // Always use dark gradient
+    final footerGradient = const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF1E2329), Color(0xFF15191E)], // Dark Grey/Black for Light Mode too
+    );
+
+    // Always use light text colors for footer
+    const textColor = Colors.white;
+    final secondaryTextColor = Colors.white60;
+    const dividerColor = Colors.white10;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      color: const Color(0xFF02030A),
+      decoration: BoxDecoration(gradient: footerGradient),
+      padding: const EdgeInsets.only(top: 80, bottom: 40),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Expanded(
-                    flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isDesktop = constraints.maxWidth > 800;
+                final footerContent = [
+                  // COL 1: Brand Info
+                  SizedBox(
+                    width: isDesktop ? 300 : double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'ماشین سازی اخگر',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: WebColors.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.precision_manufacturing_rounded, color: WebColors.primary, size: 28),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'ماشین سازی اخگر',
+                              style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 16),
-                        Text('طراحی و ساخت ماشین آلات صنعتی با بالاترین استاندارد کیفیت.', style: TextStyle(color: Colors.white54, height: 1.6)),
+                        const SizedBox(height: 24),
+                        Text(
+                          'طراحی و ساخت ماشین آلات صنعتی با بالاترین استاندارد کیفیت.\nپیشرو در صنعت رول‌فرمینگ و ماشین‌آلات سنگین.',
+                          style: TextStyle(color: secondaryTextColor, height: 1.8, fontSize: 14),
+                        ),
+                        const SizedBox(height: 32),
+                        Row(
+                          children: [
+                            _socialIcon(Icons.telegram, 'https://t.me/akhgar', secondaryTextColor),
+                            const SizedBox(width: 16),
+                            _socialIcon(Icons.camera_alt, 'https://instagram.com/akhgar', secondaryTextColor),
+                            const SizedBox(width: 16),
+                            _socialIcon(Icons.video_collection, 'https://aparat.com/akhgar', secondaryTextColor),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 40),
-                  Expanded(
+                  if (!isDesktop) const SizedBox(height: 40),
+                  // COL 2: Quick Links
+                  SizedBox(
+                    width: isDesktop ? 200 : double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
                           'دسترسی سریع',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 16),
                         ),
-                        const SizedBox(height: 16),
-                        _footerLink('محصولات', () => Get.toNamed('/products')),
-                        _footerLink('اخبار', () => Get.toNamed('/news')), // Added News Link
-                        _footerLink('درباره ما', () => _scrollTo(2200)),
+                        Container(margin: const EdgeInsets.only(top: 8, bottom: 24), width: 40, height: 2, color: WebColors.primary),
+                        _footerLink('محصولات', () => Get.toNamed('/products'), secondaryTextColor),
+                        _footerLink('اخبار و مقالات', () => Get.toNamed('/news'), secondaryTextColor),
+                        _footerLink('درباره ما', () => _scrollTo(2200), secondaryTextColor),
+                        _footerLink('تماس با ما', () => _scrollTo(3500), secondaryTextColor),
                       ],
                     ),
                   ),
-                  const Expanded(
+                  if (!isDesktop) const SizedBox(height: 40),
+                  // COL 3: Contact Info
+                  SizedBox(
+                    width: isDesktop ? 250 : double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'تماس',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        const Text(
+                          'اطلاعات تماس',
+                          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 16),
                         ),
-                        SizedBox(height: 16),
-                        Text('info@akhgar.ir', style: TextStyle(color: Colors.white54)),
+                        Container(margin: const EdgeInsets.only(top: 8, bottom: 24), width: 40, height: 2, color: WebColors.primary),
+                        _contactRow(Icons.phone_android, '۰۹۱۲۹۳۷۸۰۱۸ (رضا رضا)', secondaryTextColor),
+                        const SizedBox(height: 16),
+                        _contactRow(Icons.email_outlined, 'info@akhgar.ir', secondaryTextColor),
+                        const SizedBox(height: 16),
+                        _contactRow(Icons.location_on_outlined, 'تهران، کهریزک، شهرک صنعتی شمس آباد، بلوار گلستان، گلشن ۱۴، پلاک ۱۵', secondaryTextColor),
                       ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 40),
-              const Divider(color: Colors.white10),
-              const SizedBox(height: 20),
-              const Text('© 2025 Mashinsazi Akhgar. All rights reserved.', style: TextStyle(color: Colors.white24, fontSize: 12)),
-            ],
+                ];
+
+                return Column(
+                  children: [
+                    if (isDesktop)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: footerContent,
+                      )
+                    else
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: footerContent,
+                      ),
+                    const SizedBox(height: 60),
+                    // MAP SECTION
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.map_rounded, color: WebColors.primary, size: 20),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'مسیریابی کارخانه',
+                              style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: 350,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            // Use TRUE for isDark to force dark map style or pass custom
+                            child: ProfessionalMapWidget(isDark: true),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+                    const Divider(color: dividerColor),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('© 2026 Mashinsazi Akhgar.', style: TextStyle(color: Colors.white30, fontSize: 12)),
+                        if (isDesktop) Text('Designed with Flutter Web', style: TextStyle(color: Colors.white12, fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _footerLink(String label, VoidCallback onTap) {
+  Widget _contactRow(IconData icon, String text, Color color) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: WebColors.primary, size: 18),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(color: color, height: 1.5, fontSize: 14),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _footerLink(String label, VoidCallback onTap, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: HoverTextLink(
+        text: label,
         onTap: onTap,
-        child: Text(label, style: const TextStyle(color: Colors.white54)),
+        hoverColor: WebColors.primary, // The color you requested
+        icon: const Icon(Icons.arrow_left_rounded), // Pass the icon here
+        baseStyle: TextStyle(
+          color: color,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+
+  Widget _socialIcon(IconData icon, String url, Color color) {
+    return HoverSocialIcon(
+      icon: icon,
+      url: url,
+      color: color,
+    );
+  }
+}
+
+class HoverTextLink extends StatefulWidget {
+  final String text;
+  final VoidCallback onTap;
+  final TextStyle baseStyle;
+  final Color hoverColor;
+  final Widget? icon; // Optional icon for footer links
+
+  const HoverTextLink({
+    super.key,
+    required this.text,
+    required this.onTap,
+    required this.baseStyle,
+    required this.hoverColor,
+    this.icon,
+  });
+
+  @override
+  State<HoverTextLink> createState() => _HoverTextLinkState();
+}
+
+class _HoverTextLinkState extends State<HoverTextLink> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: widget.onTap,
+      onHover: (value) {
+        setState(() {
+          _isHovered = value;
+        });
+      },
+      // Remove default InkWell splash if you want just text color change,
+      // or keep it for touch feedback.
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.icon != null) ...[
+            // Apply hover color to icon too if present
+            IconTheme(
+              data: IconThemeData(
+                color: _isHovered ? widget.hoverColor : (widget.baseStyle.color ?? Colors.white70),
+                size: 16,
+              ),
+              child: widget.icon!,
+            ),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            widget.text,
+            style: widget.baseStyle.copyWith(
+              color: _isHovered ? widget.hoverColor : widget.baseStyle.color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HoverSocialIcon extends StatefulWidget {
+  final IconData icon;
+  final String url;
+  final Color color;
+
+  const HoverSocialIcon({super.key, required this.icon, required this.url, required this.color});
+
+  @override
+  State<HoverSocialIcon> createState() => _HoverSocialIconState();
+}
+
+class _HoverSocialIconState extends State<HoverSocialIcon> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {}, // Add launchUrl logic here
+      onHover: (value) {
+        setState(() {
+          _isHovered = value;
+        });
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          // Background becomes Primary Color with Opacity on Hover
+          color: _isHovered ? WebColors.primary.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            // Border becomes Primary Color on Hover
+            color: _isHovered ? WebColors.primary.withOpacity(0.5) : widget.color,
+          ),
+        ),
+        child: Icon(
+          widget.icon,
+          // Icon color becomes Primary on Hover
+          color: _isHovered ? WebColors.primary : widget.color,
+          size: 20,
+        ),
       ),
     );
   }

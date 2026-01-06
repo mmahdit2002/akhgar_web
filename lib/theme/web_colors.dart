@@ -1,3 +1,4 @@
+// web_colors.dart
 import 'package:flutter/material.dart';
 
 class WebColors {
@@ -9,11 +10,16 @@ class WebColors {
   static const Color darkBorder = Color(0x22FFFFFF);
 
   // Light Palette
-  static const Color lightBg = Color(0xFFF8F9FA);
-  static const Color lightBgSoft = Color(0xFFFFFFFF);
+  static const Color lightBg = Color(0xFFE9EEF4);
+  static const Color lightBgSoft = Color(0xFFF2F4F7);
+  static const Color lightBgSecondary = Color(0xFFDDE3EC);
   static const Color lightText = Color(0xFF1A1D1E);
-  static const Color lightTextSecondary = Color(0xFF6C757D);
-  static const Color lightBorder = Color(0xFFE9ECEF);
+  static const Color lightTextSecondary = Color(0xFF566171);
+  static const Color lightBorder = Color(0xFFCBD3DD);
+
+  // NEW: Dark Header/Footer for Light Mode
+  // This creates the "Professional" contrast you want
+  static const Color lightHeaderBg = Color(0xFF1E2329);
 
   // Brand Colors (Shared)
   static const Color primary = Color(0xFFFF8A00); // Orange

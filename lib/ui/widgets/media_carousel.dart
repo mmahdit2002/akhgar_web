@@ -1,3 +1,4 @@
+// media_carousel.dart
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,11 +32,11 @@ class _MediaCarouselState extends State<MediaCarousel> {
       return Container(
         height: widget.height,
         decoration: BoxDecoration(
-          color: widget.isDark ? WebColors.darkBgSoft : Colors.grey[100],
+          color: widget.isDark ? WebColors.darkBgSoft : WebColors.lightBgSoft,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Center(
-          child: Icon(Icons.article_outlined, size: 80, color: Colors.grey[400]),
+          child: Icon(Icons.article_outlined, size: 80, color: widget.isDark ? Colors.grey[600] : Colors.grey[400]),
         ),
       );
     }

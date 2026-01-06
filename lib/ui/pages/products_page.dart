@@ -1,7 +1,10 @@
+// products_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:mashinsazi_akhgar_web/bloc/product/product_bloc.dart';
+import 'package:mashinsazi_akhgar_web/theme/theme_cubit.dart';
+import 'package:mashinsazi_akhgar_web/theme/web_colors.dart';
 import 'package:mashinsazi_akhgar_web/ui/widgets/product_card_widget.dart';
 
 class ProductsPage extends StatefulWidget {
@@ -33,10 +36,16 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.select((ThemeCubit c) => c.isDark);
     return Scaffold(
+      backgroundColor: isDark ? WebColors.darkBg : WebColors.lightBg,
       appBar: AppBar(
-        title: const Text('محصولات'),
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Get.back()),
+        backgroundColor: isDark ? WebColors.darkBg : WebColors.lightBg,
+        title: Text('محصولات', style: TextStyle(color: isDark ? WebColors.darkText : WebColors.lightText)),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: isDark ? WebColors.darkText : WebColors.lightText),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
@@ -80,9 +89,9 @@ class _ProductsPageState extends State<ProductsPage> {
                           },
                         ),
                         if (state.hasReachedMax && state.products.isNotEmpty)
-                          const Padding(
-                            padding: EdgeInsets.all(32),
-                            child: Text('همه محصولات بارگذاری شدند', style: TextStyle(color: Colors.grey)),
+                          Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Text('همه محصولات بارگذاری شدند', style: TextStyle(color: isDark ? Colors.grey[400] : WebColors.lightTextSecondary)),
                           ),
                       ],
                     );

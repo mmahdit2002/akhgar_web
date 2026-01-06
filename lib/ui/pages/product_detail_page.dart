@@ -127,7 +127,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Container(
-            color: isDark ? WebColors.darkBgSoft : Colors.grey[100],
+            color: isDark ? WebColors.darkBgSoft : WebColors.lightBgSecondary,
             child: CarouselSlider.builder(
               carouselController: _carouselController,
               itemCount: product.media.length,
@@ -208,7 +208,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Container(
       height: 400,
       width: double.infinity,
-      decoration: BoxDecoration(color: isDark ? WebColors.darkBgSoft : Colors.grey[200], borderRadius: BorderRadius.circular(24)),
+      decoration: BoxDecoration(
+        color: isDark ? WebColors.darkBgSoft : WebColors.lightBgSecondary,
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: Icon(Icons.image_not_supported_outlined, size: 60, color: isDark ? Colors.white24 : Colors.black26),
     );
   }
@@ -255,7 +258,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 height: 50,
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: isDark ? WebColors.darkBgSoft.withOpacity(0.5) : Colors.grey[200],
+                  color: isDark ? WebColors.darkBgSoft.withOpacity(0.5) : WebColors.lightBgSecondary,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: TabBar(
@@ -284,7 +287,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 height: 400,
                 margin: const EdgeInsets.only(top: 24),
                 decoration: BoxDecoration(
-                  color: isDark ? WebColors.darkBgSoft : WebColors.lightBgSoft,
+                  color: isDark ? WebColors.darkBgSoft : WebColors.lightBgSecondary,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: isDark ? WebColors.darkBorder : Colors.grey[200]!),
                   boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 5))],
@@ -377,7 +380,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         final isEven = index % 2 == 0;
         index++;
         return Container(
-          decoration: BoxDecoration(color: isEven ? (isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50]) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(color: isEven ? (isDark ? Colors.white.withOpacity(0.05) : Color.fromARGB(255, 200, 207, 218)) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           margin: const EdgeInsets.only(bottom: 8),
           child: Row(
@@ -414,7 +417,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.rate_review_outlined, size: 48, color: Colors.grey[300]),
+                Icon(Icons.rate_review_outlined, size: 48, color: isDark ? Colors.grey[300] : Colors.grey[800]),
                 const SizedBox(height: 12),
                 Text('هنوز نظری ثبت نشده است', style: TextStyle(color: textColor)),
               ],
@@ -432,7 +435,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             return Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? WebColors.darkBg : Colors.white,
+                color: isDark ? WebColors.darkBg : WebColors.lightBgSoft,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: isDark ? Colors.white10 : Colors.grey[200]!),
               ),

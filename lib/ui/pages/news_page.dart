@@ -1,7 +1,10 @@
+// news_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:get/Get.dart';
 import 'package:mashinsazi_akhgar_web/bloc/post/post_bloc.dart';
+import 'package:mashinsazi_akhgar_web/theme/theme_cubit.dart';
+import 'package:mashinsazi_akhgar_web/theme/web_colors.dart';
 import 'package:mashinsazi_akhgar_web/ui/widgets/news_card_widget.dart';
 
 class NewsPage extends StatefulWidget {
@@ -33,11 +36,17 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.select((ThemeCubit c) => c.isDark);
     return Scaffold(
+      backgroundColor: isDark ? WebColors.darkBg : WebColors.lightBg,
       appBar: AppBar(
-        title: const Text('اخبار و مقالات'),
+        backgroundColor: isDark ? WebColors.darkBg : WebColors.lightBg,
+        title: Text('اخبار و مقالات', style: TextStyle(color: isDark ? WebColors.darkText : WebColors.lightText)),
         centerTitle: true,
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Get.back()),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: isDark ? WebColors.darkText : WebColors.lightText),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: BlocBuilder<PostBloc, PostState>(
         builder: (context, state) {
@@ -80,9 +89,9 @@ class _NewsPageState extends State<NewsPage> {
                           },
                         ),
                         if (state.hasReachedMax && state.posts.isNotEmpty)
-                          const Padding(
-                            padding: EdgeInsets.all(32),
-                            child: Text('همه اخبار بارگذاری شدند', style: TextStyle(color: Colors.grey)),
+                          Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Text('همه اخبار بارگذاری شدند', style: TextStyle(color: isDark ? Colors.grey[400] : WebColors.lightTextSecondary)),
                           ),
                       ],
                     );
